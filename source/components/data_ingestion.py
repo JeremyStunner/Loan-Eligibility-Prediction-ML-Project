@@ -10,6 +10,9 @@ from dataclasses import dataclass
 from source.components.data_transformation import DataTransformation
 from source.components.data_transformation import DataTransformationConfig
 
+from source.components.model_trainer import ModelTrainerConfig
+from source.components.model_trainer import ModelTrainer
+
 @dataclass
 class DataIngestionConfig:
     train_data_path: str=os.path.join('artifacts',"train.csv")
@@ -30,7 +33,8 @@ class DataIngestion:
             df.to_csv(self.ingestion_config.raw_data_path,index=False,header=True)
 
             logging.info("Train test split initiated")
-            train_set,test_set=train_test_split(df,test_size=0.2,random_state=42)
+            y=df["Loan_Status"]
+            train_set,test_set=train_test_split(df,test_size=0.2,random_state=42,stratify=y)
 
             train_set.to_csv(self.ingestion_config.train_data_path,index=False,header=True)
             test_set.to_csv(self.ingestion_config.test_data_path,index=False,header=True)
@@ -51,5 +55,8 @@ if __name__=="__main__":
 
     data_transformation=DataTransformation()
 
-    data_transformation.initiate_data_transformation(train_data,test_data)
+    train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
+
+    modeltrainer=ModelTrainer()
+    print(modeltrainer.initiate_model_trainer(train_arr,test_arr))
                 
