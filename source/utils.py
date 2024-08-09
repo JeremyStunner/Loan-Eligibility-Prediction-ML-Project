@@ -6,6 +6,8 @@ import dill
 
 from sklearn.metrics import accuracy_score
 
+
+
 from source.exception import CustomException
 
 
@@ -42,4 +44,12 @@ def evaluate_models(x_train,y_train,x_test,y_test,models):
         return report
 
     except Exception as e:
-        raise CustomException(e,sys)                
+        raise CustomException(e,sys)  
+
+def load_object(file_path):
+    try:
+        with open(file_path, "rb") as file_obj:
+            return dill.load(file_obj)
+
+    except Exception as e:
+        raise CustomException(e, sys)              
